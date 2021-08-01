@@ -1,7 +1,7 @@
 FROM node
 
 WORKDIR /code
-COPY src/ /code
+COPY src/ /code/src
 
 COPY package.json /code/package.json
 COPY yarn.lock /code/yarn.lock
