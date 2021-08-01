@@ -8,7 +8,7 @@ COPY yarn.lock /code/yarn.lock
 
 RUN yarn
 
-COPY tsconfig.json /code/package.json
+COPY tsconfig.json /code/tsconfig.json
 
 RUN yarn build
 
