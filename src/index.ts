@@ -38,13 +38,21 @@ const update = async () => {
       console.log('Found:', item.guid)
       GUID.push(item.guid)
 
+      let text = item.link + '\n\nsd card'
+
+      if (item['pepper:merchant']) {
+        const merchant = item['pepper:merchant'];
+        if (merchant.name) text += ` @ ${decodeHTML(decodeHTML(item['pepper:merchant'].name))}`
+        if (merchant.price) text += ` @ ${item['pepper:merchant'].price}`
+      }
+
       await fetch(WEBHOOK, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          content: `${item.link}\n\nsd card @ ${decodeHTML(decodeHTML(item['pepper:merchant'].name))} for ${item['pepper:merchant'].price}`
+          content: text
         })
       })
         .then(res => res.text())
