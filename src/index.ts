@@ -43,7 +43,7 @@ const update = async () => {
       if (item['pepper:merchant']) {
         const merchant = item['pepper:merchant'];
         if (merchant.name) text += ` @ ${decodeHTML(decodeHTML(item['pepper:merchant'].name))}`
-        if (merchant.price) text += ` @ ${item['pepper:merchant'].price}`
+        if (merchant.price) text += ` for ${item['pepper:merchant'].price}`
       }
 
       await fetch(WEBHOOK, {
