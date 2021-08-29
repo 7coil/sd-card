@@ -4,6 +4,8 @@ import { RootObject } from './SubscriptionData';
 import { readFileSync, writeFileSync } from 'fs';
 import { decode as decodeHTML } from 'html-entities';
 
+const sleep = (time: number) => new Promise((resolve) => setTimeout(resolve, time))
+
 const parserOptions = {
   parseAttributeValue: true,
   parseNodeValue: true,
@@ -46,17 +48,31 @@ const update = async () => {
         if (merchant.price) text += ` for ${item['pepper:merchant'].price}`
       }
 
-      await fetch(WEBHOOK, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          content: text
+      while(true) {
+        const req = await fetch(WEBHOOK, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            content: text
+          })
         })
-      })
-        .then(res => res.text())
-        .then(res => console.log(res))
+  
+        if (req.status === 200) {
+          // Hurrah!
+          break;
+        } else {
+          try {
+            const errorDetails = await req.json();
+            if (errorDetails.retry_after) {
+              await sleep(errorDetails.retry_after);
+            }
+          } catch(e) {
+            await sleep(5000)
+          }
+        }
+      }
     } else {
       console.log('Skipping:', item.guid)
     }
